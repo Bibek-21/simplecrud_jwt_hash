@@ -2,7 +2,8 @@
 
 "use strict";
 const login_user = require('../sql/login');
-const uuid= require("../sql/findUser");
+const findUser= require("../sql/findUser");
+
 
 
 (() => {
@@ -19,7 +20,7 @@ const uuid= require("../sql/findUser");
             };
             const token = jWT.sign({obj},process.env.JWT_SECRET_KEY,{expiresIn:'300s'});
 
-            const user_uuid= await uuid(obj.userName);
+            const user_uuid= await findUser(obj.userName);
             // const info = await helper.validationHelper.userinfo(obj);
         
                 const content = await login_user(obj,user_uuid[0][0],token);
@@ -27,7 +28,8 @@ const uuid= require("../sql/findUser");
                 if (content == true) {
                     res.status(200).send({
                         message: 'successfully Logged In',
-                        success: true
+                        success: true,
+                        token: token
                     })
                 }
                 else {
